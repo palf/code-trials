@@ -4,6 +4,6 @@ require "cucumber/rake/task"
 
 
 RSpec::Core::RakeTask.new(:spec)
-Cucumber::Rake::Task.new(:features)
+# Cucumber::Rake::Task.new(:features)
 
 task :default => :spec

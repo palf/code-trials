@@ -1,4 +1,4 @@
-## Setup
+## JavaScript Setup
 
 To install dependencies:
 
@@ -18,6 +18,15 @@ To run both in seperate terminals:
     grunt watch:lint
     grunt watch:test
 
+## Ruby Setup
+
+I use rbenv and bundler:
+
+    bundle
+
+Rake and RSpec:
+
+    rake spec
 
 ## Notes
 
