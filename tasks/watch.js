@@ -2,7 +2,7 @@ var config = {
     options: { atBegin: true },
 
     lint: {
-        files: '<%= lint.all.src %>',
+        files: ['<%= lint.all.src %>', '.jshintrc' ],
         tasks: [ 'lint' ]
     },
 
