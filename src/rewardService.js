@@ -8,15 +8,18 @@ var InvalidPortfolio = {
     results: []
 };
 
-
+var ValidResponse = {
+    message: "successful",
+    results: []
+};
 
 function fetchRewards (accountNumber, portfolio) {
     if (accountNumber === undefined) {
         return InvalidAccountNumber;
-    }
-
-    if (portfolio === undefined) {
+    } else if (portfolio === undefined) {
         return InvalidPortfolio;
+    } else {
+        return ValidResponse;
     }
 }
 
