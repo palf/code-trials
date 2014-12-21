@@ -21,6 +21,10 @@ To run both in seperate terminals:
 
 ## Notes
 
+- This code has been written from a purely TDD perspective; I've tried to ensure
+  my commit history demonstrates my process (usually I squash my branches flat
+  after feature development)
+
 - Instead of throwing an error for invalid input, I return a descriptive message.
   It's the responsibility of the client code to interpret and handle that message.
 
