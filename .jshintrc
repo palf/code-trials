@@ -21,8 +21,6 @@
     "nonbsp": true,
     "nonew": true,
     "plusplus": true,
-    "maxstatements": 5,
-    "maxcomplexity": 3,
 
     "browser": true,
     "devel": true,
