@@ -1,15 +1,35 @@
 var expect = require('expect.js');
 var RewardService = require('../src/rewardService.js');
-var Channels = require('../src/channels.js');
 var sinon = require('sinon');
 
-describe(".fetchRewards(accountNumber, portfolio)", function () {
+var sportsChannel = "SPORTS",
+    kidsChannel = "KIDS",
+    musicChannel = "MUSIC",
+    newsChannel = "NEWS",
+    moviesChannel = "MOVIES";
+
+var sportsReward = 'CHAMPIONS_LEAGUE_FINAL_TICKET',
+    kidsReward = 'N/A',
+    musicReward = 'KARAOKE_PRO_MICROPHONE',
+    newsReward = 'N/A',
+    moviesReward = 'PIRATES_OF_THE_CARIBBEAN_COLLECTION';
+
+
+var rewards = {};
+rewards[sportsChannel]    = sportsReward;
+rewards[kidsChannel]      = kidsReward;
+rewards[musicChannel]     = musicReward;
+rewards[newsChannel]      = newsReward;
+rewards[moviesChannel]    = moviesReward;
+
+
+describe("#fetchRewards(accountNumber, portfolio)", function () {
     describe("invocation", function () {
         var eligibilityCheck, rewardService;
 
         beforeEach(function () {
             eligibilityCheck = sinon.stub();
-            rewardService = new RewardService(eligibilityCheck);
+            rewardService = new RewardService(eligibilityCheck, rewards);
         });
 
         describe("called without an account number", function () {
@@ -20,7 +40,7 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
 
             it("returns an 'invalid account number' message", function() {
                 var response = rewardService.fetchRewards();
-                expect(response.message).to.be("invalid account number");
+                expect(response.message).to.be("invalid invocation");
             });
 
             it("returns an empty list of results", function () {
@@ -40,7 +60,7 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
 
             it("returns an 'invalid portfolio' message", function() {
                 var response = rewardService.fetchRewards(validAccountNumber);
-                expect(response.message).to.be("invalid portfolio");
+                expect(response.message).to.be("invalid invocation");
             });
 
             it("returns an empty list of results", function () {
@@ -58,7 +78,7 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
 
         beforeEach(function () {
             var eligibilityCheck = sinon.stub().returns('CUSTOMER_ELIGIBLE');
-            rewardService = new RewardService(eligibilityCheck);
+            rewardService = new RewardService(eligibilityCheck, rewards);
         });
 
         it("returns a 'successful' message", function() {
@@ -75,7 +95,7 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
         });
 
         describe("with a portfolio of one channel with no reward", function () {
-            var portfolio = [ Channels.KIDS ];
+            var portfolio = [ kidsChannel ];
 
             it("returns an empty list of results", function () {
                 var response = rewardService.fetchRewards(validAccountNumber, portfolio);
@@ -85,7 +105,7 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
         });
 
         describe("with a portfolio of multiple channels with no rewards", function () {
-            var portfolio = [ Channels.KIDS, Channels.NEWS ];
+            var portfolio = [ kidsChannel, newsChannel ];
 
             it("returns an empty list of results", function () {
                 var response = rewardService.fetchRewards(validAccountNumber, portfolio);
@@ -95,8 +115,7 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
         });
 
         describe("with a portfolio of one channel with a reward", function () {
-            var portfolio = [ Channels.SPORTS ];
-            var sportsReward = 'CHAMPIONS_LEAGUE_FINAL_TICKET';
+            var portfolio = [ sportsChannel ];
 
             it("returns a single result matching that channel", function () {
                 var response = rewardService.fetchRewards(validAccountNumber, portfolio);
@@ -107,9 +126,7 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
         });
 
         describe("with a portfolio of multiple channels with rewards", function () {
-            var portfolio = [ Channels.SPORTS, Channels.MUSIC ];
-            var sportsReward = 'CHAMPIONS_LEAGUE_FINAL_TICKET';
-            var musicReward = 'KARAOKE_PRO_MICROPHONE';
+            var portfolio = [ sportsChannel, musicChannel ];
 
             it("returns an array of results matching those channels", function () {
                 var response = rewardService.fetchRewards(validAccountNumber, portfolio);
@@ -121,14 +138,32 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
         });
 
         describe("with a portfolio of multiple channels with mixed rewards", function () {
-            var portfolio = [ Channels.SPORTS, Channels.KIDS ];
-            var sportsReward = 'CHAMPIONS_LEAGUE_FINAL_TICKET';
+            var portfolio = [ sportsChannel, kidsChannel ];
 
             it("returns an array of results matching those channels", function () {
                 var response = rewardService.fetchRewards(validAccountNumber, portfolio);
                 expect(response.rewards).to.be.an('array');
                 expect(response.rewards.length).to.be(1);
                 expect(response.rewards).to.contain(sportsReward);
+            });
+        });
+
+        describe("with a portfolio of all channels", function () {
+            var portfolio = [
+                sportsChannel,
+                kidsChannel,
+                musicChannel,
+                newsChannel,
+                moviesChannel
+            ];
+
+            it("returns an array of results matching those channels", function () {
+                var response = rewardService.fetchRewards(validAccountNumber, portfolio);
+                expect(response.rewards).to.be.an('array');
+                expect(response.rewards.length).to.be(3);
+                expect(response.rewards).to.contain(sportsReward);
+                expect(response.rewards).to.contain(musicReward);
+                expect(response.rewards).to.contain(moviesReward);
             });
         });
     });
@@ -141,7 +176,7 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
 
         beforeEach(function () {
             var eligibilityCheck = sinon.stub().returns('CUSTOMER_INELIGIBLE');
-            rewardService = new RewardService(eligibilityCheck);
+            rewardService = new RewardService(eligibilityCheck, rewards);
         });
 
         it("returns a 'customer is not eligible' message", function() {
@@ -165,7 +200,7 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
 
         beforeEach(function () {
             eligibilityCheck = sinon.stub().throws('invalid account number');
-            rewardService = new RewardService(eligibilityCheck);
+            rewardService = new RewardService(eligibilityCheck, rewards);
         });
 
         it("makes an eligibility check with the account number", function () {
@@ -195,7 +230,7 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
 
         beforeEach(function () {
             eligibilityCheck = sinon.stub().throws('technical failure');
-            rewardService = new RewardService(eligibilityCheck);
+            rewardService = new RewardService(eligibilityCheck, rewards);
         });
 
         it("makes an eligibility check with the account number", function () {
@@ -225,7 +260,7 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
 
         beforeEach(function () {
             eligibilityCheck = sinon.stub().throws();
-            rewardService = new RewardService(eligibilityCheck);
+            rewardService = new RewardService(eligibilityCheck, rewards);
         });
 
         it("makes an eligibility check with the account number", function () {

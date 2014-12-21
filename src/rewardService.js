@@ -1,35 +1,11 @@
-var Channels = require('./channels');
+var utils = require('./utils');
 
-var EligibleResponse = {
-    message: "successful",
-    rewards: []
-};
-
-var NotEligibleResponse = {
-    message: "customer is not eligible",
-    rewards: []
-};
-
-var InvalidAccountNumberResponse = {
-    message: "invalid account number",
-    rewards: []
-};
-
-var InvalidPortfolioResponse = {
-    message: "invalid portfolio",
-    rewards: []
-};
-
-var UnavailableResponse = {
-    message: "eligibility service is unreachable",
-    rewards: []
-};
-
-var UnknownErrorResponse = {
-    message: "eligibility service experienced an unknown error",
-    rewards: []
-};
-
+var EligibleMessage = "successful",
+    NotEligibleMessage = "customer is not eligible",
+    InvalidAccountNumberMessage = "invalid account number",
+    InvalidInvocationMessage = "invalid invocation",
+    UnavailableMessage = "eligibility service is unreachable",
+    UnknownErrorMessage = "eligibility service experienced an unknown error";
 
 var EligibilityStatus = {
     eligible: 'CUSTOMER_ELIGIBLE',
@@ -59,83 +35,66 @@ function performEligibilityCheck (check, account) {
     return status;
 }
 
-
-function map (list, f) {
-    var result = [];
-    for (var i = 0; i < list.length; i++) {
-        var item = list[i];
-        var output = f(item);
-        result.push(output);
-    }
-    return result;
-}
-
-function filter (list, predicate) {
-    var result = [];
-    for (var i = 0; i < list.length; i++) {
-        var item = list[i];
-        var output = predicate(item);
-        if (output === true) { result.push(item); }
-    }
-    return result;
-}
-
-var rewards = {};
-rewards[Channels.SPORTS]    = 'CHAMPIONS_LEAGUE_FINAL_TICKET';
-rewards[Channels.KIDS]      = 'N/A';
-rewards[Channels.MUSIC]     = 'KARAOKE_PRO_MICROPHONE';
-rewards[Channels.NEWS]      = 'N/A';
-rewards[Channels.MOVIES]    = 'PIRATES_OF_THE_CARIBBEAN_COLLECTION';
-
-function buildRewardsForPortfolio (portfolio) {
-    var mapped = map(portfolio, function (channel) {
+function buildRewardsForPortfolio (portfolio, rewards) {
+    var mapped = utils.map(portfolio, function (channel) {
         return rewards[channel];
     });
 
-    var filtered = filter(mapped, function (reward) {
+    var filtered = utils.filter(mapped, function (reward) {
         return reward !== 'N/A';
     });
 
     return filtered;
 }
 
-function buildRewardResponse (portfolio) {
+function buildRewardResponse (portfolio, rewards) {
     return {
-        message: EligibleResponse.message,
-        rewards: buildRewardsForPortfolio(portfolio)
+        message: EligibleMessage,
+        rewards: buildRewardsForPortfolio(portfolio, rewards)
     };
 }
 
 
-function buildResponseForStatus (status, portfolio) {
+function buildResponseForStatus (status, portfolio, rewards) {
+    var message;
     switch (status) {
         case EligibilityStatus.eligible:
-            return buildRewardResponse(portfolio);
+            return buildRewardResponse(portfolio, rewards);
 
         case EligibilityStatus.ineligible:
-            return NotEligibleResponse;
+            message = NotEligibleMessage;
+            break;
 
         case EligibilityStatus.unavailable:
-            return UnavailableResponse;
+            message = UnavailableMessage;
+            break;
 
         case EligibilityStatus.invalidAccountNumber:
-            return InvalidAccountNumberResponse;
+            message = InvalidAccountNumberMessage;
+            break;
 
         default:
-            return UnknownErrorResponse;
+            message = UnknownErrorMessage;
+            break;
     }
+
+    return {
+        message: message,
+        rewards: []
+    };
 }
 
 
-function RewardService (eligibilityCheck) {
+function RewardService (eligibilityCheck, rewards) {
     this.fetchRewards = function (accountNumber, portfolio) {
-        if (accountNumber === undefined) {
-            return InvalidAccountNumberResponse;
-        } else if (portfolio === undefined) {
-            return InvalidPortfolioResponse;
+        if (accountNumber === undefined || portfolio === undefined) {
+            return {
+                message: InvalidInvocationMessage,
+                rewards: []
+            };
         } else {
             var status = performEligibilityCheck(eligibilityCheck, accountNumber);
-            return buildResponseForStatus(status, portfolio);
+            return buildResponseForStatus(status, portfolio, rewards);
         }
     };
 }
