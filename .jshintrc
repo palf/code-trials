@@ -20,7 +20,6 @@
     "noempty": true,
     "nonbsp": true,
     "nonew": true,
-    "plusplus": true,
 
     "browser": true,
     "devel": true,
