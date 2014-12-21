@@ -7,6 +7,7 @@ var EligibleMessage = "successful",
     UnavailableMessage = "eligibility service is unreachable",
     UnknownErrorMessage = "eligibility service experienced an unknown error";
 
+//  this enum should belong to the eligibility service code
 var EligibilityStatus = {
     eligible: 'CUSTOMER_ELIGIBLE',
     ineligible: 'CUSTOMER_INELIGIBLE',
@@ -15,6 +16,10 @@ var EligibilityStatus = {
     unknownError: 'UNKNOWN_ERROR'
 };
 
+var InvalidInvocationStatus = 'INVALID_INVOCATION';
+
+/*  required if the eligibility service throws string errors
+    the eligibility service could throw named errors instead */
 function identifyError (error) {
     if (error.name === 'invalid account number') {
         return EligibilityStatus.invalidAccountNumber;
@@ -25,6 +30,8 @@ function identifyError (error) {
     }
 }
 
+/*  move to eligibility service; remove error-throwing and replace with
+    descriptive responses */
 function performEligibilityCheck (check, account) {
     var status;
     try {
@@ -35,6 +42,7 @@ function performEligibilityCheck (check, account) {
     return status;
 }
 
+//  use underscore.js (and chaining) to clean up this function
 function buildRewardsForPortfolio (portfolio, rewards) {
     var mapped = utils.map(portfolio, function (channel) {
         return rewards[channel];
@@ -47,51 +55,48 @@ function buildRewardsForPortfolio (portfolio, rewards) {
     return filtered;
 }
 
-function buildRewardResponse (portfolio, rewards) {
-    return {
-        message: EligibleMessage,
-        rewards: buildRewardsForPortfolio(portfolio, rewards)
-    };
-}
-
-
-function buildResponseForStatus (status, portfolio, rewards) {
-    var message;
+//  could replace switch with a hash (see test for example)
+function messageForStatus (status) {
     switch (status) {
         case EligibilityStatus.eligible:
-            return buildRewardResponse(portfolio, rewards);
+            return EligibleMessage;
 
         case EligibilityStatus.ineligible:
-            message = NotEligibleMessage;
-            break;
+            return NotEligibleMessage;
 
         case EligibilityStatus.unavailable:
-            message = UnavailableMessage;
-            break;
+            return UnavailableMessage;
 
         case EligibilityStatus.invalidAccountNumber:
-            message = InvalidAccountNumberMessage;
-            break;
+            return InvalidAccountNumberMessage;
+
+        case InvalidInvocationStatus:
+            return InvalidInvocationMessage;
 
         default:
-            message = UnknownErrorMessage;
-            break;
+            return UnknownErrorMessage;
     }
-
-    return {
-        message: message,
-        rewards: []
-    };
 }
 
+function rewardsForStatus (status, portfolio, rewards) {
+    if (status === EligibilityStatus.eligible) {
+        return buildRewardsForPortfolio(portfolio, rewards);
+    } else {
+        return [];
+    }
+}
+
+function buildResponseForStatus (status, portfolio, rewards) {
+    return {
+        message: messageForStatus(status),
+        rewards: rewardsForStatus(status, portfolio, rewards)
+    };
+}
 
 function RewardService (eligibilityCheck, rewards) {
     this.fetchRewards = function (accountNumber, portfolio) {
         if (accountNumber === undefined || portfolio === undefined) {
-            return {
-                message: InvalidInvocationMessage,
-                rewards: []
-            };
+            return buildResponseForStatus(InvalidInvocationStatus);
         } else {
             var status = performEligibilityCheck(eligibilityCheck, accountNumber);
             return buildResponseForStatus(status, portfolio, rewards);
