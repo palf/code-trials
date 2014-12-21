@@ -1,3 +1,5 @@
+var Channels = require('./channels');
+
 var EligibleResponse = {
     message: "successful",
     rewards: []
@@ -58,10 +60,26 @@ function performEligibilityCheck (check, account) {
 }
 
 
-function buildResponseForStatus (status) {
+function buildRewardsForPortfolio (portfolio) {
+    if (portfolio.length > 0 && portfolio[0] === Channels.SPORTS) {
+        return [ 'CHAMPIONS_LEAGUE_FINAL_TICKET' ];
+    } else {
+        return [];
+    }
+}
+
+function buildRewardResponse (portfolio) {
+    return {
+        message: EligibleResponse.message,
+        rewards: buildRewardsForPortfolio(portfolio)
+    };
+}
+
+
+function buildResponseForStatus (status, portfolio) {
     switch (status) {
         case EligibilityStatus.eligible:
-            return EligibleResponse;
+            return buildRewardResponse(portfolio);
 
         case EligibilityStatus.ineligible:
             return NotEligibleResponse;
@@ -86,7 +104,7 @@ function RewardService (eligibilityCheck) {
             return InvalidPortfolioResponse;
         } else {
             var status = performEligibilityCheck(eligibilityCheck, accountNumber);
-            return buildResponseForStatus(status);
+            return buildResponseForStatus(status, portfolio);
         }
     };
 }

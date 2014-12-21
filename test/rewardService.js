@@ -1,5 +1,6 @@
 var expect = require('expect.js');
 var RewardService = require('../src/rewardService.js');
+var Channels = require('../src/channels.js');
 var sinon = require('sinon');
 
 describe(".fetchRewards(accountNumber, portfolio)", function () {
@@ -46,6 +47,62 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
                 var response = rewardService.fetchRewards();
                 expect(response.rewards).to.be.an('array');
                 expect(response.rewards.length).to.be(0);
+            });
+        });
+    });
+
+    describe("when a customer is eligible", function () {
+        var validAccountNumber = 4,
+            emptyPortfolio = [],
+            rewardService;
+
+        beforeEach(function () {
+            var eligibilityCheck = sinon.stub().returns('CUSTOMER_ELIGIBLE');
+            rewardService = new RewardService(eligibilityCheck);
+        });
+
+        it("returns a 'successful' message", function() {
+            var response = rewardService.fetchRewards(validAccountNumber, emptyPortfolio);
+            expect(response.message).to.be("successful");
+        });
+
+        describe("with an empty portfolio", function () {
+            it("returns an empty list of results", function () {
+                var response = rewardService.fetchRewards(validAccountNumber, emptyPortfolio);
+                expect(response.rewards).to.be.an('array');
+                expect(response.rewards.length).to.be(0);
+            });
+        });
+
+        describe("with a portfolio of one channel with no reward", function () {
+            var portfolio = [ Channels.KIDS ];
+
+            it("returns an empty list of results", function () {
+                var response = rewardService.fetchRewards(validAccountNumber, portfolio);
+                expect(response.rewards).to.be.an('array');
+                expect(response.rewards.length).to.be(0);
+            });
+        });
+
+        describe("with a portfolio of multiple channels with no rewards", function () {
+            var portfolio = [ Channels.KIDS, Channels.NEWS ];
+
+            it("returns an empty list of results", function () {
+                var response = rewardService.fetchRewards(validAccountNumber, portfolio);
+                expect(response.rewards).to.be.an('array');
+                expect(response.rewards.length).to.be(0);
+            });
+        });
+
+        describe("with a portfolio of one channel with a reward", function () {
+            var portfolio = [ Channels.SPORTS ];
+            var sportsReward = 'CHAMPIONS_LEAGUE_FINAL_TICKET';
+
+            it("returns a single result matching that channel", function () {
+                var response = rewardService.fetchRewards(validAccountNumber, portfolio);
+                expect(response.rewards).to.be.an('array');
+                expect(response.rewards.length).to.be(1);
+                expect(response.rewards[0]).to.be(sportsReward);
             });
         });
     });
