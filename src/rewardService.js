@@ -1,5 +1,8 @@
 function fetchRewards () {
-    return [];
+    return {
+        message: "invalid account number",
+        results: []
+    };
 }
 
 

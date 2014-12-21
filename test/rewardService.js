@@ -2,9 +2,16 @@ var expect = require('expect.js');
 var rewardService = require('../src/rewardService.js');
 
 describe(".fetchRewards(customerNumber, portfolio)", function () {
-    it("returns an empty array", function() {
-        var result = rewardService.fetchRewards();
-        expect(result).to.be.an('array');
-        expect(result.length).to.be(0);
+    describe("with no customer number", function () {
+        it("returns an 'invalid account number' message", function() {
+            var response = rewardService.fetchRewards();
+            expect(response.message).to.be("invalid account number");
+        });
+
+        it("returns an empty list of results", function () {
+            var response = rewardService.fetchRewards();
+            expect(response.results).to.be.an('array');
+            expect(response.results.length).to.be(0);
+        });
     });
 });
