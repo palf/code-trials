@@ -102,7 +102,21 @@ describe(".fetchRewards(accountNumber, portfolio)", function () {
                 var response = rewardService.fetchRewards(validAccountNumber, portfolio);
                 expect(response.rewards).to.be.an('array');
                 expect(response.rewards.length).to.be(1);
-                expect(response.rewards[0]).to.be(sportsReward);
+                expect(response.rewards).to.contain(sportsReward);
+            });
+        });
+
+        describe("with a portfolio of multiple channels with rewards", function () {
+            var portfolio = [ Channels.SPORTS, Channels.MUSIC ];
+            var sportsReward = 'CHAMPIONS_LEAGUE_FINAL_TICKET';
+            var musicReward = 'KARAOKE_PRO_MICROPHONE';
+
+            it("returns an array of results matching those channels", function () {
+                var response = rewardService.fetchRewards(validAccountNumber, portfolio);
+                expect(response.rewards).to.be.an('array');
+                expect(response.rewards.length).to.be(2);
+                expect(response.rewards).to.contain(sportsReward);
+                expect(response.rewards).to.contain(musicReward);
             });
         });
     });

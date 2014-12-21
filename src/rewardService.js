@@ -60,12 +60,43 @@ function performEligibilityCheck (check, account) {
 }
 
 
-function buildRewardsForPortfolio (portfolio) {
-    if (portfolio.length > 0 && portfolio[0] === Channels.SPORTS) {
-        return [ 'CHAMPIONS_LEAGUE_FINAL_TICKET' ];
-    } else {
-        return [];
+function map (list, f) {
+    var result = [];
+    for (var i = 0; i < list.length; i++) {
+        var item = list[i];
+        var output = f(item);
+        result.push(output);
     }
+    return result;
+}
+
+function filter (list, predicate) {
+    var result = [];
+    for (var i = 0; i < list.length; i++) {
+        var item = list[i];
+        var output = predicate(item);
+        if (output === true) { result.push(item); }
+    }
+    return result;
+}
+
+var rewards = {};
+rewards[Channels.SPORTS]    = 'CHAMPIONS_LEAGUE_FINAL_TICKET';
+rewards[Channels.KIDS]      = 'N/A';
+rewards[Channels.MUSIC]     = 'KARAOKE_PRO_MICROPHONE';
+rewards[Channels.NEWS]      = 'N/A';
+rewards[Channels.MOVIES]    = 'PIRATES_OF_THE_CARIBBEAN_COLLECTION';
+
+function buildRewardsForPortfolio (portfolio) {
+    var mapped = map(portfolio, function (channel) {
+        return rewards[channel];
+    });
+
+    var filtered = filter(mapped, function (reward) {
+        return reward !== 'N/A';
+    });
+
+    return filtered;
 }
 
 function buildRewardResponse (portfolio) {
