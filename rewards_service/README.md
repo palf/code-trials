@@ -1,6 +1,6 @@
 ## JavaScript Setup
 
-You'll need [Node|http://nodejs.org/]; just follow the instructions in that link.
+You'll need [Node](http://nodejs.org/); just follow the instructions in that link.
 
 To install dependencies:
 
@@ -23,7 +23,7 @@ To run either standalone:
 
 ## Ruby Setup
 
-You'll need [Ruby|https://www.ruby-lang.org/en/documentation/installation/]; just follow the instructions in that link.
+You'll need [Ruby](https://www.ruby-lang.org/en/documentation/installation/); just follow the instructions in that link.
 
 To install dependencies:
 
