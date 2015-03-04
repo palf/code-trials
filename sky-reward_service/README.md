@@ -1,7 +1,10 @@
 ## JavaScript Setup
 
+You'll need [Node|http://nodejs.org/]; just follow the instructions in that link.
+
 To install dependencies:
 
+    npm install -g grunt-cli
     npm install
 
 To run linting and tests:
@@ -13,20 +16,23 @@ To run lint and tests with watch:
 
     grunt watch
 
-To run both in seperate terminals:
+To run either standalone:
 
     grunt watch:lint
     grunt watch:test
 
 ## Ruby Setup
 
-I use rbenv and bundler:
+You'll need [Ruby|https://www.ruby-lang.org/en/documentation/installation/]; just follow the instructions in that link.
 
-    bundle
+To install dependencies:
+
+    bundle install
 
 Rake and RSpec:
 
     rake spec
+    bundle exec rspec
 
 ## Notes
 
