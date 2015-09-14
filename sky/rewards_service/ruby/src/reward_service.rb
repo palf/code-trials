@@ -1,6 +1,6 @@
-class InvalidAccountNumberError < Exception; end
-class ServiceUnavailableError < Exception; end
-class UnknownError < Exception; end
+class InvalidAccountNumberError < StandardError; end
+class ServiceUnavailableError < StandardError; end
+class UnknownError < StandardError; end
 
 class RewardService
 
@@ -29,7 +29,7 @@ class RewardService
             :INVALID_ACCOUNT_NUMBER
         rescue ServiceUnavailableError
             :SERVICE_UNAVAILABLE
-        rescue Exception
+        rescue StandardError
             :UNKNOWN_ERROR
         end
     end
