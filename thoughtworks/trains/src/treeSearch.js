@@ -28,7 +28,7 @@ function selectFrom (fringe) {
     return fringe.shift();
 }
 
-module.exports = function generalTreeSearch (problem, strategy, shortCircuit) {
+function generalTreeSearch (problem, strategy, shortCircuit) {
     var prevSearchNodes = {};
     var createSearchNode = newSearchNode.bind(this, prevSearchNodes);
     var fringe = [ createSearchNode(problem.initialState) ];
@@ -57,4 +57,6 @@ module.exports = function generalTreeSearch (problem, strategy, shortCircuit) {
     }
 
     return solutions;
-};
+}
+
+module.exports = generalTreeSearch;
