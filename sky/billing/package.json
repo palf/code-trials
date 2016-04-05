@@ -1,0 +1,31 @@
+{
+  "name": "sky-bill-viewer",
+  "version": "0.0.0",
+  "description": "View your Sky bill",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.4.3",
+    "express": "^4.4.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "sky",
+    "bill"
+  ],
+  "author": "jackpalf",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "engines" : {
+    "node" : "0.12.x"
+  }
+}
