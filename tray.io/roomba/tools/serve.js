@@ -15,7 +15,7 @@ browserSync({
       }
 
       if (!req.url.startsWith(rootDir)) {
-        let location = rootDir.substr(0, rootDir.length - 1) + req.url;
+        const location = rootDir.substr(0, rootDir.length - 1) + req.url;
         console.log(`Redirect from ${req.url} to ${location}`);
         res.writeHead(302, { Location: location });
         return res.end();
@@ -25,7 +25,7 @@ browserSync({
 
       try {
         req.url = req.url.substr(rootDir.length - 1);
-        let pathname = req.url.indexOf('?') === -1 ?
+        const pathname = req.url.indexOf('?') === -1 ?
           req.url : req.url.substr(0, req.url.indexOf('?'));
 
         if (pathname === '/css/main.min.css') {
@@ -38,8 +38,8 @@ browserSync({
           res.setHeader('Content-Type', 'application/javascript');
           res.end(output);
         } else {
-          let filename = pathname === '/' ? './base/index.md' : './base' + pathname + '.md';
-          let exists = await fs.exists(filename);
+          const filename = pathname === '/' ? './base/index.md' : './base' + pathname + '.md';
+          const exists = await fs.exists(filename);
           if (!exists) {
             return next();
           }

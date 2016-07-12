@@ -1,7 +1,7 @@
 import _ from 'underscore';
 
 const applyCommand = ({bounds, dirt, position}, command) => {
-  let result = command(bounds, dirt, position);
+  const result = command(bounds, dirt, position);
 
   return {
     bounds: result.bounds,

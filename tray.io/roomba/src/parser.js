@@ -3,7 +3,7 @@ import Actions from '../src/actions';
 import Vector from '../src/vector';
 
 const stringToVector = (string) => {
-  let [x, y] = string.split(' ');
+  const [x, y] = string.split(' ');
   return Vector.create(Number(x), Number(y));
 };
 
@@ -18,7 +18,7 @@ const parseCommand = (key) => commandKey[key];
 const parseCommands = (string) => _.map(string, parseCommand);
 
 const parse = (string) => {
-  let lines = string.split('\n');
+  const lines = string.split('\n');
   if (lines.length < 4) {
     return {
       bounds: stringToVector('0 0'),
@@ -28,10 +28,10 @@ const parse = (string) => {
     };
   } else {
 
-    let bounds = stringToVector(lines[0]);
-    let position = stringToVector(lines[1]);
-    let dirt = _.map(lines.slice(2, -1), stringToVector);
-    let commands = parseCommands(lines.slice(-1)[0]);
+    const bounds = stringToVector(lines[0]);
+    const position = stringToVector(lines[1]);
+    const dirt = _.map(lines.slice(2, -1), stringToVector);
+    const commands = parseCommands(lines.slice(-1)[0]);
 
     return {
       bounds,

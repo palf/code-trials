@@ -17,28 +17,28 @@ describe("Executor", function () {
 
   describe("execute(world)", function () {
     it("does nothing when given no commands", function () {
-      let world = defaultWorld();
-      let result = Executor.execute(world);
+      const world = defaultWorld();
+      const result = Executor.execute(world);
       expect(result.position.x).to.be.equal(1);
       expect(result.position.y).to.be.equal(2);
       expect(result.dirt.length).to.be.equal(1);
     });
 
     it("moves the position of the hoover", function () {
-      let world = defaultWorld();
+      const world = defaultWorld();
       world.commands.push(Actions.moveNorth);
-      let result = Executor.execute(world);
+      const result = Executor.execute(world);
       expect(result.position.x).to.be.equal(1);
       expect(result.position.y).to.be.equal(3);
       expect(result.dirt.length).to.be.equal(1);
     });
 
     it("removes dirt when it enters a square", function () {
-      let world = defaultWorld();
+      const world = defaultWorld();
       world.commands.push(Actions.moveNorth);
       world.commands.push(Actions.moveEast);
       world.commands.push(Actions.moveEast);
-      let result = Executor.execute(world);
+      const result = Executor.execute(world);
       expect(result.position.x).to.be.equal(3);
       expect(result.position.y).to.be.equal(3);
       expect(result.dirt.length).to.be.equal(0);

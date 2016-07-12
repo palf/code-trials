@@ -9,8 +9,8 @@ const cleanPosition = (dirt, position) => {
 }
 
 const move = (vector, bounds, dirt, position) => {
-  let newPosition = Vector.boundBy(bounds, Vector.moveBy(vector, position))
-  let remainingDirt = cleanPosition(dirt, newPosition)
+  const newPosition = Vector.boundBy(bounds, Vector.moveBy(vector, position))
+  const remainingDirt = cleanPosition(dirt, newPosition)
   return { bounds: bounds, dirt: remainingDirt, position: newPosition }
 }
 
@@ -30,4 +30,3 @@ export default {
   moveEast,
   moveWest
 }
-
